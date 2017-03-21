@@ -22,6 +22,7 @@ public class DLXField {
     private final List<Node> m_rowHeaderNodes = new ArrayList<>();
     private final Node m_rootNode;
     private final List<Node> m_solutions = new ArrayList<>();
+    private final List<List<Node>> m_finalSolutions = new ArrayList<>();
     
     /**
      * Constructor for initialization of DLX object
@@ -56,7 +57,6 @@ public class DLXField {
     
     private void initialize()
     {
-
         //initialize colHeaderNodes
         for(int i = 0; i< m_colCount; i++)
         {
@@ -105,24 +105,31 @@ public class DLXField {
             row++;
         }
         
-        for(Node currNode = m_rootNode.getRight();!currNode.isRootNode();currNode = currNode.m_right)
-        {
-            System.out.println("normalnode: " + currNode);
-        }
-        
-        for(Node currNode = m_rowHeaderNodes.get(2).getRight();!currNode.isRowHeaderNode();currNode = currNode.getRight())
-        {
-            System.out.println("headernode: " + currNode);
-        }
+//        for(Node currNode = m_rootNode.getRight();!currNode.isRootNode();currNode = currNode.m_right)
+//        {
+//            System.out.println("normalnode: " + currNode);
+//        }
+//        
+//        for(Node currNode = m_rowHeaderNodes.get(2).getRight();!currNode.isRowHeaderNode();currNode = currNode.getRight())
+//        {
+//            System.out.println("headernode: " + currNode);
+//        }
         
         return result;
     }
     
     
-    public void solve()
+    public List<List<Node>> getFinalSolutions()
+    {
+        return m_finalSolutions;
+    }
+    
+    public List<Node> solve()
     {
         if (m_rootNode.getRight() == m_rootNode) {
             printSolution();
+            m_finalSolutions.add(new ArrayList<>(m_solutions));
+            return m_solutions;
         } else {
             Node column = chooseNextColumn();
             cover(column);
@@ -152,10 +159,12 @@ public class DLXField {
             }
             uncover(column);
         }
+        return null;
     }
     
     public void cover(Node nodeToCover) 
     {
+//        System.out.println("covering node: " + nodeToCover);
         Node column = getColHeaderNode(nodeToCover);
         column.getRight().setLeft(column.getLeft());
         column.getLeft().setRight(column.getRight());
@@ -170,7 +179,17 @@ public class DLXField {
         }
     }
     
+    public void setInitial (int row)
+    {
+        Node rhn = getRowHeaderNode(row);
+        for(Node n = rhn.getRight(); n != rhn; n = n.getRight())
+        {
+            cover(n);    
+        }
+    }
+    
     public void uncover(Node nodeToUncover) {
+//        System.out.println("uncovering node: " + nodeToUncover);
         Node column = getColHeaderNode(nodeToUncover);
         
         for (Node row = column.getUp(); row != column; row = row.getUp()) {
@@ -203,7 +222,7 @@ public class DLXField {
         return m_rowHeaderNodes.get(rowNr);
     }
     
-    int getCurrRowCount()
+    public int getCurrRowCount()
     {
         int count=0;
         for(Node row = m_rootNode.getDown(); row != m_rootNode ; row = row.getDown())
@@ -213,7 +232,7 @@ public class DLXField {
         return count;
     }
     
-    int getCurrColCount()
+    public int getCurrColCount()
     {
         int count=0;
         for(Node col = m_rootNode.getRight(); col != m_rootNode ; col = col.getRight())
@@ -252,5 +271,26 @@ public class DLXField {
 
     private void printSolution() {
         System.out.println("riddle is solved!!! solution is: " + m_solutions);
+    }
+    
+    @Override
+    public String toString()
+    {
+        byte[][] matrix = toMatrix();
+        String result = "";
+        System.out.println();
+        for(int row = 0; row < matrix.length; row++)
+        {
+            for(int col = 0; col < matrix[0].length; col++)
+            {
+                if((col%(16) == 0))
+                {
+                    result += "|";
+                }
+                result += matrix[row][col];
+            }
+            result += "\n";
+        }
+        return result;
     }
 }
