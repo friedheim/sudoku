@@ -19,7 +19,6 @@ public class SudokuDLXConverter {
     
     private final byte[][] m_initialDLX;
     
-//    private List<FieldSol> m_fieldSols = new ArrayList<>();
     private FieldSol[] m_fieldSols;
     
     
@@ -28,7 +27,7 @@ public class SudokuDLXConverter {
         DLXField dlx = conv.getInitialDLX();
         System.out.println("currRow: " + dlx.getCurrRowCount() + " col: " + dlx.getCurrColCount());
         dlx.setInitial(12);
-        System.out.println("currRow___: " + dlx.getCurrRowCount() + " col: " + dlx.getCurrColCount());
+        System.out.println("currRow: " + dlx.getCurrRowCount() + " col: " + dlx.getCurrColCount());
         System.out.println(dlx.toString());
         dlx.setInitial(25);
         dlx.setInitial(50);
@@ -43,12 +42,6 @@ public class SudokuDLXConverter {
                 System.out.println("sol: " + conv.getFieldSol(n) );
             }
         }
-        if(solution == null)
-        {
-            System.out.println("No solution was found!!!!");
-            return;
-        }
- 
     }
     
     public SudokuDLXConverter(byte n)

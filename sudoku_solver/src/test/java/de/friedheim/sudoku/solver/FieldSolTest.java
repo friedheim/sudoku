@@ -8,6 +8,8 @@ package de.friedheim.sudoku.solver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 import static org.junit.Assert.*;
 
 /**
@@ -16,8 +18,9 @@ import static org.junit.Assert.*;
  */
 public class FieldSolTest {
     
-//    public FieldSolTest() {
-//    }
+    @Rule
+    public final ExpectedException thrown = ExpectedException.none();
+
     
     @Before
     public void setUp() {
@@ -27,9 +30,6 @@ public class FieldSolTest {
     public void tearDown() {
     }
 
-    /**
-     * Test of getRegion method, of class FieldSol.
-     */
     @Test
     public void testGetRegionMin4() {
         System.out.println("getRegion");
@@ -37,13 +37,8 @@ public class FieldSolTest {
         byte expResult = 1;
         byte result = instance.getRegion();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
     }
     
-    /**
-     * Test of getRegion method, of class FieldSol.
-     */
     @Test
     public void testGetRegionMax4() {
         System.out.println("getRegion");
@@ -51,13 +46,8 @@ public class FieldSolTest {
         byte expResult = 4;
         byte result = instance.getRegion();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
     }
-    
-    /**
-     * Test of getRegion method, of class FieldSol.
-     */
+
     @Test
     public void testGetRegionMiddle4() {
         System.out.println("getRegionMiddle");
@@ -65,7 +55,66 @@ public class FieldSolTest {
         byte expResult = 2;
         byte result = instance.getRegion();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
+    }
+    
+    @Test
+    public void testThrowsErrorInvalNValue()
+    {
+        thrown.expect(IllegalArgumentException.class);
+        new FieldSol((byte)5, (byte)2, (byte)2, (byte)2);
+    }
+        
+    @Test
+    public void testThrowsErrorHighCandValue()
+    {
+        thrown.expect(IllegalArgumentException.class);
+        new FieldSol((byte)4, (byte)5, (byte)2, (byte)2);
+    }
+    
+    @Test
+    public void testThrowsErrorLowCandValue()
+    {
+        thrown.expect(IllegalArgumentException.class);
+        new FieldSol((byte)4, (byte)0, (byte)2, (byte)2);
+    }
+            
+    @Test
+    public void testThrowsErrorHighRowValue()
+    {
+        thrown.expect(IllegalArgumentException.class);
+        new FieldSol((byte)4, (byte)4, (byte)5, (byte)1);
+    }
+    
+    @Test
+    public void testThrowsErrorLowRowValue()
+    {
+        thrown.expect(IllegalArgumentException.class);
+        new FieldSol((byte)4, (byte)1, (byte)0, (byte)4);
+    }
+                
+    @Test
+    public void testThrowsErrorHighColValue()
+    {
+        thrown.expect(IllegalArgumentException.class);
+        new FieldSol((byte)4, (byte)4, (byte)1, (byte)5);
+    }
+    
+    @Test
+    public void testThrowsErrorLowColValue()
+    {
+        thrown.expect(IllegalArgumentException.class);
+        new FieldSol((byte)4, (byte)1, (byte)4, (byte)0);
+    }
+    
+    @Test
+    public void testThrowsNoErrorMinValues()
+    {
+        new FieldSol((byte)4, (byte)1, (byte)1, (byte)1);
+    }
+    
+    @Test
+    public void testThrowsNoErrorMaxValues()
+    {
+        new FieldSol((byte)4, (byte)4, (byte)4, (byte)4);
     }
 }

@@ -21,6 +21,7 @@ public class SudokuFieldTest {
             {0,4,0,0},
             {3,0,4,0}
         };
-        SudokuField sf = new SudokuField(4,sudoku4);
+        SudokuField sf = new SudokuField((byte)4,sudoku4);
+        sf.solve();
     }
 }

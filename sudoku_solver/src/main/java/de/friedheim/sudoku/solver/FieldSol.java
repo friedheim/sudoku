@@ -5,8 +5,12 @@
  */
 package de.friedheim.sudoku.solver;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
- *
+ * Class for representation of a sudoku-field filled with an value. 
+ * The values are 1-based indexes.
  * @author friedheim
  */
 public class FieldSol {
@@ -16,12 +20,40 @@ public class FieldSol {
     private final byte m_cand;
     private final byte m_n;
     
+    private final List<Byte> POSSIBLE_N_VALUES = Arrays.asList((byte)4,(byte)9,(byte)16); //new byte[]{4,9,16};
+    
     public FieldSol(byte n, byte cand, byte rowNr, byte colNr)
     {
+        _checkConstrParameters(n, cand, rowNr, colNr);
         m_n = n;
         m_cand = cand;
         m_rowNr = rowNr;
         m_colNr = colNr;
+    }
+    
+    private void _checkConstrParameters(byte n, byte cand, byte rowNr, byte colNr)
+    {
+        if(!POSSIBLE_N_VALUES.contains(n))
+        {
+            throw new IllegalArgumentException("Value n can only be one of: " + POSSIBLE_N_VALUES + " but is: " + n);
+        }
+        
+        if(cand <= 0 || cand > n)
+        {
+            throw new IllegalArgumentException("Value cand is invalid: " + cand);
+        }
+        
+        if(rowNr <= 0 || rowNr > n)
+        {
+            throw new IllegalArgumentException("Value rowNr is invalid: " + rowNr);
+        }
+        
+        if(colNr <= 0 || colNr > n)
+        {
+            throw new IllegalArgumentException("Value colNr is invalid: " + colNr);
+        }
+        
+        
     }
 
     public byte getColNr() 
@@ -93,6 +125,4 @@ public class FieldSol {
         }
         return true;
     }
-    
-    
 }
