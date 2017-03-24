@@ -104,17 +104,6 @@ public class DLXField {
             }
             row++;
         }
-        
-//        for(Node currNode = m_rootNode.getRight();!currNode.isRootNode();currNode = currNode.m_right)
-//        {
-//            System.out.println("normalnode: " + currNode);
-//        }
-//        
-//        for(Node currNode = m_rowHeaderNodes.get(2).getRight();!currNode.isRowHeaderNode();currNode = currNode.getRight())
-//        {
-//            System.out.println("headernode: " + currNode);
-//        }
-        
         return result;
     }
     
@@ -142,7 +131,6 @@ public class DLXField {
                     {
                         cover(n);
                     }
-                    
                 }
 
                 solve();
@@ -171,10 +159,10 @@ public class DLXField {
 
         for (Node row = column.getDown(); row != column; row = row.getDown()) 
         {
-            for (Node rightNode = row.getRight(); rightNode != row; rightNode = rightNode.getRight()) 
+            for (Node currNode = row.getRight(); currNode != row; currNode = currNode.getRight()) 
             {
-                rightNode.getUp().setDown(rightNode.getDown());
-                rightNode.getDown().setUp(rightNode.getUp());
+                currNode.getUp().setDown(currNode.getDown());
+                currNode.getDown().setUp(currNode.getUp());
             }
         }
     }
@@ -250,10 +238,10 @@ public class DLXField {
         rowHeaderNode.addLeft(addedNode);
     }
 
-    private byte[][] createCeroFilledArray() 
-    {
-        return createCeroFilledArray(m_rowCount,m_colCount);
-    }
+//    private byte[][] createCeroFilledArray() 
+//    {
+//        return createCeroFilledArray(m_rowCount,m_colCount);
+//    }
     
     private byte[][] createCeroFilledArray(int rowCount, int colCount) 
     {

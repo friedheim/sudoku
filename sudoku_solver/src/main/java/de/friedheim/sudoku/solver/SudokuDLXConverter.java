@@ -44,16 +44,16 @@ public class SudokuDLXConverter {
         }
     }
     
-    public SudokuDLXConverter(byte n)
+    SudokuDLXConverter(byte n)
     {
         m_n = n;
         m_initialDLX = createInitialDLXArr();
     }
     
-    public DLXField convertSudokuToDLX()
-    {
-        return null;
-    }
+//    DLXField convertSudokuToDLX()
+//    {
+//        return null;
+//    }
     
     private byte[][] createInitialDLXArr()
     {
@@ -125,7 +125,7 @@ public class SudokuDLXConverter {
         return result;
     }
     
-    public int getDLXRowIndex(FieldSol sol)
+    int getDLXRowIndex(FieldSol sol)
     {
         byte[] dlxRowArr = createDLXRow(sol);
         return getDLXRowIndex(dlxRowArr);
@@ -145,12 +145,12 @@ public class SudokuDLXConverter {
         throw new Error("searching for dlx-row, that does not exist");
     }
     
-    public FieldSol getFieldSol(Node n)
+    FieldSol getFieldSol(Node n)
     {
         return getFieldSol(n.getRowNr());
     }
     
-    public FieldSol getFieldSol(int row)
+    FieldSol getFieldSol(int row)
     {
         return m_fieldSols[row];
     }

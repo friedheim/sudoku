@@ -21,14 +21,7 @@ public class DLXFieldTest
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
     
-//    private final byte[][] values= new byte[][]{
-//        new byte[]{1,1,0,0,0},
-//        new byte[]{1,1,1,0,0},
-//        new byte[]{1,1,0,1,0},
-//        new byte[]{0,0,1,0,1}
-//    };
-    
-    private final byte[][] values= new byte[][]{
+    private final byte[][] values1= new byte[][]{
         new byte[]{0,0,1,0,1,1,0},
         new byte[]{1,0,0,1,0,0,1},
         new byte[]{0,1,1,0,0,1,0},
@@ -37,32 +30,43 @@ public class DLXFieldTest
         new byte[]{0,0,0,1,1,0,1}
     };
     
-    private DLXField out;
+    private final byte[][] values2 = new byte[][]{
+        new byte[]{1,1,0,0,0},
+        new byte[]{1,1,1,0,0},
+        new byte[]{1,1,0,1,0},
+        new byte[]{0,0,1,0,1}
+    };
+    
+
+    
+    private DLXField out1;
+    private DLXField out2;
 
     @Before
     public void setUp()
     {
-        out = new DLXField(values[0].length,values.length,values);
+        out1 = new DLXField(values1[0].length,values1.length,values1);
+        out2 = new DLXField(values2[0].length,values2.length,values2);
     }
     
     @Test //(expected=IllegalArgumentException.class)
     public void testInitializeCorrectly() //throws Exception
     {
 //        thrown.expect(IllegalArgumentException.class);
-        new DLXField(values[0].length,values.length,values);
+        new DLXField(values1[0].length,values1.length,values1);
     }
     
         @Test 
     public void testInitializeThrowsExc()
     {
         thrown.expect(IllegalArgumentException.class);
-        new DLXField(values[0].length-1,values.length,values);
+        new DLXField(values1[0].length-1,values1.length,values1);
     }
     
     @Test
     public void testToByteMatrix()
     {
-        for(byte[] row: out.toMatrix())
+        for(byte[] row: out1.toMatrix())
         {
             for(byte el: row)
             {
@@ -70,44 +74,44 @@ public class DLXFieldTest
             }
             System.out.println("");
         }
-        Assert.assertTrue("matrixes are not Equal: \n" + toString(out.toMatrix()) + " not equals \n" + toString(values), compareMatrices(out.toMatrix(),values) );
+        Assert.assertTrue("matrixes are not Equal: \n" + toString(out1.toMatrix()) + " not equals \n" + toString(values1), compareMatrices(out1.toMatrix(),values1) );
     }
     
     @Test
     public void testGetRowCount()
     {
-        Assert.assertEquals(out.getCurrRowCount(), values.length);
+        Assert.assertEquals(out1.getCurrRowCount(), values1.length);
     }
     
         @Test
     public void testGetColCount()
     {
-        Assert.assertEquals(out.getCurrColCount(), values[0].length);
+        Assert.assertEquals(out1.getCurrColCount(), values1[0].length);
     }
     
-//    @Test
-//    public void testCoverColHeader()
-//    {
-//        byte[][] expected = new byte[][]{
-//            new byte[]{1,1,0,0},
-//            new byte[]{1,1,1,0}
-//        };
-//        out.cover(out.getColHeaderNode(2));
-//        Assert.assertTrue("testCoverColHeader produces error: \n" + toString(out.toMatrix()) + " not equals \n" + toString(expected), compareMatrices(out.toMatrix(),expected) );
-//    }
+    @Test
+    public void testCoverColHeader()
+    {
+        byte[][] expected = new byte[][]{
+            new byte[]{1,1,0,0},
+            new byte[]{1,1,1,0}
+        };
+        out2.cover(out2.getColHeaderNode(2));
+        Assert.assertTrue("testCoverColHeader produces error: \n" + toString(out2.toMatrix()) + " not equals \n" + toString(expected), compareMatrices(out2.toMatrix(),expected) );
+    }
     
     @Test
     public void testSolve()
     {
-        out.solve();
+        out1.solve();
     }
     
     @Test
     public void testCoverUncover()
     {
-        out.cover(out.getColHeaderNode(2));
-        out.uncover(out.getColHeaderNode(2));
-        Assert.assertTrue("not equal: \n" + toString(out.toMatrix()) + " not equals \n" + toString(values), compareMatrices(out.toMatrix(),values) ); 
+        out1.cover(out1.getColHeaderNode(2));
+        out1.uncover(out1.getColHeaderNode(2));
+        Assert.assertTrue("not equal: \n" + toString(out1.toMatrix()) + " not equals \n" + toString(values1), compareMatrices(out1.toMatrix(),values1) ); 
     }
     
     private boolean compareMatrices(byte[][] matrix1, byte[][] matrix2)

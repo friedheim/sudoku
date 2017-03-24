@@ -17,7 +17,7 @@ public class SudokuField
 {
     private final byte m_n;
     private final byte[][] m_initValues;
-    private byte[][] m_filledValues;
+    private final byte[][] m_filledValues;
     
     public static void main(String[] args)
     {
@@ -104,7 +104,7 @@ public class SudokuField
         };
         
         System.out.println("hallo Friedheim");
-        SudokuField sf = new SudokuField((byte)16,sudoku16_normal);
+        SudokuField sf = new SudokuField((byte)9,sudokuhardest_1);
         sf.solve();
         sf.printSolution();
     }
@@ -116,7 +116,7 @@ public class SudokuField
         m_filledValues = initValues;
     }
     
-    public void solve()
+    public byte[][] solve()
     {
         SudokuDLXConverter conv = new SudokuDLXConverter(m_n);
         DLXField dlx = conv.getInitialDLX();
@@ -147,17 +147,15 @@ public class SudokuField
         }
         dlx.solve();
         List<List<Node>> fs = dlx.getFinalSolutions();
-//        for(List<Node> nodeL:fs)
-//        {
         List<Node> nodeL = fs.get(0);
         System.out.println("nodel: " + nodeL);
-        for(Node n: nodeL)
+        nodeL.forEach(n -> 
         {
             FieldSol sol = conv.getFieldSol(n);
             m_filledValues[sol.getRowNr()-1][sol.getColNr()-1] = sol.getCand();
             System.out.println("sol: " + conv.getFieldSol(n) );
-        }
-//        }
+        });
+        return m_filledValues;
     }
     
     public void printSolution()
