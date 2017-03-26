@@ -9,7 +9,7 @@ package de.friedheim.dlx;
  *
  * @author friedheim
  */
-public final class Node {
+public class Node {
     Node m_left;
     Node m_right;
     Node m_up;

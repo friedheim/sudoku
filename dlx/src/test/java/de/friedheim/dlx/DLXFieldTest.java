@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -49,18 +50,25 @@ public class DLXFieldTest
         out2 = new DLXField(values2[0].length,values2.length,values2);
     }
     
-    @Test //(expected=IllegalArgumentException.class)
-    public void testInitializeCorrectly() //throws Exception
+    @Test 
+    public void testInitializeCorrectly() 
     {
-//        thrown.expect(IllegalArgumentException.class);
         new DLXField(values1[0].length,values1.length,values1);
     }
     
-        @Test 
+    @Test 
     public void testInitializeThrowsExc()
     {
         thrown.expect(IllegalArgumentException.class);
         new DLXField(values1[0].length-1,values1.length,values1);
+    }
+    
+    @Test 
+    public void testInitializeColCaps()
+    {
+        assertEquals("initialization colCaps invalid", 2 , out1.getColHeaderNode(0).getColCap());
+        assertEquals("initialization colCaps invalid", 3 , out1.getColHeaderNode(3).getColCap());
+        assertEquals("initialization colCaps invalid", 3 , out1.getColHeaderNode(6).getColCap());
     }
     
     @Test
@@ -97,13 +105,7 @@ public class DLXFieldTest
             new byte[]{1,1,1,0}
         };
         out2.cover(out2.getColHeaderNode(2));
-        Assert.assertTrue("testCoverColHeader produces error: \n" + toString(out2.toMatrix()) + " not equals \n" + toString(expected), compareMatrices(out2.toMatrix(),expected) );
-    }
-    
-    @Test
-    public void testSolve()
-    {
-        out1.solve();
+        assertTrue("testCoverColHeader produces error: \n" + toString(out2.toMatrix()) + " not equals \n" + toString(expected), compareMatrices(out2.toMatrix(),expected) );
     }
     
     @Test
@@ -111,7 +113,30 @@ public class DLXFieldTest
     {
         out1.cover(out1.getColHeaderNode(2));
         out1.uncover(out1.getColHeaderNode(2));
-        Assert.assertTrue("not equal: \n" + toString(out1.toMatrix()) + " not equals \n" + toString(values1), compareMatrices(out1.toMatrix(),values1) ); 
+        assertTrue("not equal: \n" + toString(out1.toMatrix()) + " not equals \n" + toString(values1), compareMatrices(out1.toMatrix(),values1) ); 
+        
+                
+    }
+    
+    @Test
+    public void testCoverColCaps()
+    {
+//        byte[][] expected = new byte[][]{
+//            new byte[]{1,1,0,0},
+//            new byte[]{1,1,1,0}
+//        };
+        out2.cover(out2.getColHeaderNode(2));
+        assertEquals(2, out2.getColHeaderNode(0).getColCap());
+        assertEquals(1, out2.getColHeaderNode(3).getColCap());
+    }
+    
+    @Test
+    public void testCoverUncoverColCaps()
+    {
+        out2.cover(out2.getColHeaderNode(2));
+        out2.uncover(out2.getColHeaderNode(2));
+        assertEquals(3, out2.getColHeaderNode(0).getColCap());
+        assertEquals(1, out2.getColHeaderNode(3).getColCap());
     }
     
     private boolean compareMatrices(byte[][] matrix1, byte[][] matrix2)

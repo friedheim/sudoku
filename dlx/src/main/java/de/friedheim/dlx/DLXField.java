@@ -8,19 +8,21 @@ package de.friedheim.dlx;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  *
  * @author friedheim
  */
 public class DLXField {
+    private long m_currentTimeMilliesStart;
     private final int m_colCount;
     private final int m_rowCount;
     private final byte[][] m_inputArray;
     
-    private final List<Node> m_colHeaderNodes = new ArrayList<>();
+    private final List<ColHNode> m_colHeaderNodes = new ArrayList<>();
     private final List<Node> m_rowHeaderNodes = new ArrayList<>();
-    private final Node m_rootNode;
+    private final ColHNode m_rootNode;
     private final List<Node> m_solutions = new ArrayList<>();
     private final List<List<Node>> m_finalSolutions = new ArrayList<>();
     
@@ -33,6 +35,7 @@ public class DLXField {
      */
     public DLXField(int colCount, int rowCount, byte[][] inputArray)
     {
+        m_currentTimeMilliesStart = System.currentTimeMillis();
         if(inputArray.length != rowCount)
         {
             throw new IllegalArgumentException("Rowsize not corresponds with input data");
@@ -50,9 +53,10 @@ public class DLXField {
         m_inputArray = inputArray;
         
         //initialize rootNode
-        m_rootNode = new Node(-1,-1);
-        
+        m_rootNode = new ColHNode(-1,-1);
+        System.out.println("vor initialize");
         initialize();
+        System.out.println("nach initialize");
     }
     
     private void initialize()
@@ -60,7 +64,7 @@ public class DLXField {
         //initialize colHeaderNodes
         for(int i = 0; i< m_colCount; i++)
         {
-            Node newNode = new Node(i,-1);
+            ColHNode newNode = new ColHNode(i,-1);
             m_colHeaderNodes.add(newNode);
             m_rootNode.addLeft(newNode);
         }
@@ -115,6 +119,8 @@ public class DLXField {
     
     public List<Node> solve()
     {
+        printDuration();
+                
         if (m_rootNode.getRight() == m_rootNode) {
             printSolution();
             m_finalSolutions.add(new ArrayList<>(m_solutions));
@@ -152,8 +158,7 @@ public class DLXField {
     
     public void cover(Node nodeToCover) 
     {
-//        System.out.println("covering node: " + nodeToCover);
-        Node column = getColHeaderNode(nodeToCover);
+        ColHNode column = getColHeaderNode(nodeToCover);
         column.getRight().setLeft(column.getLeft());
         column.getLeft().setRight(column.getRight());
 
@@ -163,6 +168,10 @@ public class DLXField {
             {
                 currNode.getUp().setDown(currNode.getDown());
                 currNode.getDown().setUp(currNode.getUp());
+                if(!currNode.isRowHeaderNode())
+                {
+                    getColHeaderNode(currNode).decrementColCap();
+                }
             }
         }
     }
@@ -177,20 +186,23 @@ public class DLXField {
     }
     
     public void uncover(Node nodeToUncover) {
-//        System.out.println("uncovering node: " + nodeToUncover);
-        Node column = getColHeaderNode(nodeToUncover);
+        ColHNode column = getColHeaderNode(nodeToUncover);
         
         for (Node row = column.getUp(); row != column; row = row.getUp()) {
-            for (Node leftNode = row.getLeft(); leftNode != row; leftNode = leftNode.getLeft()) {
-                leftNode.getUp().setDown(leftNode);
-                leftNode.getDown().setUp(leftNode);
+            for (Node currNode = row.getLeft(); currNode != row; currNode = currNode.getLeft()) {
+                currNode.getUp().setDown(currNode);
+                currNode.getDown().setUp(currNode);
+                if(!currNode.isRowHeaderNode())
+                {
+                    getColHeaderNode(currNode).incrementColCap();
+                }
             }
         }
         column.getRight().setLeft(column);
         column.getLeft().setRight(column);
     }
     
-    Node getColHeaderNode(Node col)
+    ColHNode getColHeaderNode(Node col)
     {
         return m_colHeaderNodes.get(col.getColNr());
     }
@@ -200,7 +212,7 @@ public class DLXField {
         return m_rowHeaderNodes.get(row.getRowNr());
     }
     
-    Node getColHeaderNode(int colNr)
+    ColHNode getColHeaderNode(int colNr)
     {
         return m_colHeaderNodes.get(colNr);
     }
@@ -232,17 +244,13 @@ public class DLXField {
     
     private void addNode(Node addedNode)
     {
-        Node colHeaderNode = getColHeaderNode(addedNode.getColNr());
+        ColHNode colHeaderNode = getColHeaderNode(addedNode.getColNr());
         Node rowHeaderNode = getRowHeaderNode(addedNode.getRowNr());
         colHeaderNode.addUp(addedNode);
         rowHeaderNode.addLeft(addedNode);
+        colHeaderNode.incrementColCap();
     }
 
-//    private byte[][] createCeroFilledArray() 
-//    {
-//        return createCeroFilledArray(m_rowCount,m_colCount);
-//    }
-    
     private byte[][] createCeroFilledArray(int rowCount, int colCount) 
     {
         byte[][] result = new byte[rowCount][colCount];
@@ -253,8 +261,21 @@ public class DLXField {
         return result;
     }
 
-    private Node chooseNextColumn() {
-        return m_rootNode.getRight();
+    private Node chooseNextColumn() 
+    {
+        int minCapacity = m_rowCount+1;
+        ColHNode minCapacityNode = (ColHNode)m_rootNode.getRight();
+        for(ColHNode currColHNode = (ColHNode)m_rootNode.getRight(); !currColHNode.isRootNode() ;
+                currColHNode = (ColHNode)currColHNode.getRight())
+        {
+            if(currColHNode.getColCap() < minCapacity)
+            {
+                minCapacity = currColHNode.getColCap();
+                minCapacityNode = currColHNode;
+            }
+        }
+        return minCapacityNode;
+//        return m_rootNode.getRight();
     }
 
     private void printSolution() {
@@ -264,21 +285,29 @@ public class DLXField {
     @Override
     public String toString()
     {
+        printDuration();
         byte[][] matrix = toMatrix();
-        String result = "";
-        System.out.println();
+        printDuration();
+//        String result = "";
+        StringBuilder s = new StringBuilder();
+        printDuration();
         for(int row = 0; row < matrix.length; row++)
         {
             for(int col = 0; col < matrix[0].length; col++)
             {
                 if((col%(16) == 0))
                 {
-                    result += "|";
+                    s.append("|");
                 }
-                result += matrix[row][col];
+                s.append(matrix[row][col]);
             }
-            result += "\n";
+            s.append("\n");
         }
-        return result;
+        printDuration();
+        return s.toString();
+    }
+
+    private void printDuration() {
+//        System.out.println("time: " + (System.currentTimeMillis() - m_currentTimeMilliesStart) + " millisekunden!!!!");
     }
 }

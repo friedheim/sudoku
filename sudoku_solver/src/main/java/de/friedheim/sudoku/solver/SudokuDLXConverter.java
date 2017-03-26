@@ -36,11 +36,11 @@ public class SudokuDLXConverter {
         List<List<Node>> fs = dlx.getFinalSolutions();
         for(List<Node> nodeL:fs)
         {
-            System.out.println("nodel: " + nodeL);
-            for(Node n: nodeL)
-            {
-                System.out.println("sol: " + conv.getFieldSol(n) );
-            }
+//            System.out.println("nodel: " + nodeL);
+//            for(Node n: nodeL)
+//            {
+//                System.out.println("sol: " + conv.getFieldSol(n) );
+//            }
         }
     }
     
@@ -72,7 +72,7 @@ public class SudokuDLXConverter {
                     FieldSol sol = new FieldSol(m_n,cand, row, col);
                     m_fieldSols[count] = sol;
                     dlxArr[count]= createDLXRow(sol);
-                    System.out.println("("+cand + "," + row + "," + col + ")");
+//                    System.out.println("("+cand + "," + row + "," + col + ")");
                     count++;
                 }
             }
@@ -84,7 +84,9 @@ public class SudokuDLXConverter {
     DLXField getInitialDLX()
     {
         DLXField field = new DLXField(getDLXColCount(), getDLXRowCount(), m_initialDLX);
-        System.out.println(field.toString());
+        System.out.println("nach Constructor");
+        System.out.println(field);
+        System.out.println("nach ausgabe");
         return field;
     }
     

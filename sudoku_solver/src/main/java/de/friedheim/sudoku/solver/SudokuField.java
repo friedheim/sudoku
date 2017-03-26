@@ -103,8 +103,7 @@ public class SudokuField
             {0,0,0,0,0,0,12,0,8,0,11,0,10,15,0,0}
         };
         
-        System.out.println("hallo Friedheim");
-        SudokuField sf = new SudokuField((byte)9,sudokuhardest_1);
+        SudokuField sf = new SudokuField((byte)16,sudoku16_normal);
         sf.solve();
         sf.printSolution();
     }
@@ -120,13 +119,6 @@ public class SudokuField
     {
         SudokuDLXConverter conv = new SudokuDLXConverter(m_n);
         DLXField dlx = conv.getInitialDLX();
-//        System.out.println("currRow: " + dlx.getCurrRowCount() + " col: " + dlx.getCurrColCount());
-//        dlx.setInitial(12);
-//        System.out.println("currRow: " + dlx.getCurrRowCount() + " col: " + dlx.getCurrColCount());
-//        System.out.println(dlx.toString());
-//        dlx.setInitial(25);
-//        dlx.setInitial(50);
-//        dlx.setInitial(59);
         byte rowNr = 1;
         for(byte[] row: m_initValues)
         {
