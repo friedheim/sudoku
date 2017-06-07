@@ -8,14 +8,12 @@ package de.friedheim.dlx;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 
 /**
  *
  * @author friedheim
  */
 public class DLXField {
-    private long m_currentTimeMilliesStart;
     private final int m_colCount;
     private final int m_rowCount;
     private final byte[][] m_inputArray;
@@ -29,13 +27,12 @@ public class DLXField {
     /**
      * Constructor for initialization of DLX object
      * 
-     * @param colCount number onumber of Columns in dlx-fieldsf Columns in dlx-fields
-     * @param rowCount number of Columns in dlx-fields
+     * @param colCount number of columns in dlx-fields
+     * @param rowCount number of rows in dlx-fields
      * @param inputArray values for initialization of the DLX-Algorithm (inner array are rows)
      */
     public DLXField(int colCount, int rowCount, byte[][] inputArray)
     {
-        m_currentTimeMilliesStart = System.currentTimeMillis();
         if(inputArray.length != rowCount)
         {
             throw new IllegalArgumentException("Rowsize not corresponds with input data");
